@@ -256,6 +256,10 @@ def csvcreate_movie():
 csvcreate_movie()
 
 
+import csv
+
+import csv
+
 def movie_urls():
     st = []
     st1 = []
@@ -266,11 +270,14 @@ def movie_urls():
         for line in reader:
             count2 += 1
             if count2 > 1:
-                st.append(line[-1])
-                st1.append(line[-2])
-                count += 1
-                if count > 4:
-                    break
+                if len(line) >= 2:  # Check if line has at least two elements
+                    st.append(line[-1])
+                    st1.append(line[-2])
+                    count += 1
+                    if count > 4:
+                        break
+                else:
+                    print("Line has fewer than two elements:", line)
     return st, st1
 
 
