@@ -7,11 +7,12 @@ import os
 from random import randint
 from datetime import datetime
 from PIL import ImageTk, Image
+from smsend import smsend
 
 booked_movies = []
 booked_movies2 = []
 names_booked_movies2 = []
-
+bookings = []
 book1 = []
 dic = {}
 pay = 0
@@ -830,7 +831,7 @@ def food():
 
         Label(
             hop1,
-            text="BookMyShow.food.com",
+            text="DAHM.food.com",
             height=2,
             font=("Algerian", 20, "bold"),
             bg="black",
@@ -3732,6 +3733,48 @@ def food():
 
 # food()
 
+import qrcode
+from PIL import Image
+from io import BytesIO
+import random
+
+def generate_random_qr(seat_prefix):
+    # Generate a random string to encode in the QR code
+    random_data = seat_prefix + str(random.randint(10000000, 99999999))  # Include seat prefix in the random data
+
+    # Create QR code instance
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(random_data)
+    qr.make(fit=True)
+
+    # Create PIL Image
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    # Convert PIL Image to bytes
+    img_bytes = BytesIO()
+    img.save(img_bytes, format='PNG')
+
+    return img_bytes.getvalue()
+
+# Example of how to use the generated QR code for each ticket
+num_tickets = 5  # Number of tickets to generate
+seat_prefixes = ['A', 'B', 'C', 'D', 'E']  # Example seat prefixes
+for _ in range(num_tickets):
+    for prefix in seat_prefixes:
+        random_qr_data = generate_random_qr(prefix)
+
+
+
+
+    # Load the generated QR code into PIL Image
+
+
+
 
 def book(a, b):
     # main.root.destroy()
@@ -3768,6 +3811,9 @@ def book(a, b):
     hopb.mainloop()
 
 
+import qrcode
+from PIL import ImageTk
+
 def ticketbill():
     bill = Tk()
     bill.geometry("400x250")
@@ -3775,12 +3821,10 @@ def ticketbill():
     main_frame.pack(fill=BOTH, expand=1)
 
     # create a canvas
-
     main_canvas = Canvas(main_frame, bg="black")
     main_canvas.pack(side=LEFT, fill=BOTH, expand=1)
 
     # create a scroll bar and configuring
-
     scroll = Scrollbar(main_frame, orient=VERTICAL, command=main_canvas.yview)
     scroll.pack(side=RIGHT, fill=Y)
 
@@ -3802,104 +3846,61 @@ def ticketbill():
     else:
         time1 = "second"
     price = 0
-    image = Image.open("img\qrcode.png")
-    image1 = image.resize((75, 75))
-    test = ImageTk.PhotoImage(image1)
-    Label(
-        frame1, text="Make sure to take some screenshots!!", bg="white", width=46
-    ).pack(anchor="w")
 
-    mi2 = ImageTk.PhotoImage(movieimage)
+
 
     for i in book1:
+        # Generate a unique QR code for this ticket
+        qr_data = f"seat:{i} time:{time1} movie:{moviename} price:{price}"
+        qr = qrcode.QRCode(version=1, box_size=10, border=5)
+        qr.add_data(qr_data)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="black", back_color="white")
+        image1 = img.resize((75, 75))
+
+        test = ImageTk.PhotoImage(image1)
+
+        # create a frame for this ticket
         frame = Frame(frame1, bg="black")
         frame.pack(fill=BOTH, expand=1)
 
-        # Label(frame,text="                                        ",bg="white",width=36).grid(row=1,column=0)
+        # display the QR code for this ticket
+        Label(frame, image=test).pack()
+        test.image = test
 
+        # display the other ticket details
+        Label(frame, text=f"Seat No: {i}", bg="black", fg="white", font=("Helvetica", 12)).pack()
+        Label(frame, text=f"Time: {time1}", bg="black", fg="white", font=("Helvetica", 12)).pack()
+        Label(frame, text=f"Movie: {moviename}", bg="black", fg="white", font=("Helvetica", 12)).pack()
+
+        # calculate the price for this ticket
         if i[0] == "A":
-            Label(
-                frame,
-                text=f"Eclusive Ticket(Rs.250)",
-                bg="black",
-                fg="white",
-                font=("Helvetica", 12, "bold", "underline"),
-                height=1,
-                width=23,
-                pady=5,
-            ).grid(row=0, column=0)
             price += 250
         else:
-            Label(
-                frame,
-                text=f"Normal Ticket(RS.200)",
-                bg="black",
-                fg="white",
-                font=("Helvetica", 12, "bold", "underline"),
-                height=1,
-                width=23,
-                pady=5,
-                padx=30,
-            ).grid(
-                row=0, column=0
-            )  # .place(x=0,y=0)
             price += 200
 
-        Label(
-            frame,
-            text="                                        ",
-            bg="black",
-            height=6,
-            width=28,
-        ).grid(row=1, column=0)
-        Label(
-            frame,
-            text=f"Seat No: {i}",
-            bg="black",
-            fg="white",
-            font=("Helvetica", 12),
-            height=1,
-            width=10,
-        ).place(x=0, y=35)
-        Label(
-            frame,
-            text=f"Time: {time1}",
-            bg="black",
-            fg="white",
-            font=("Helvetica", 12),
-            height=1,
-            width=11,
-        ).place(x=0, y=60)
-        Label(
-            frame,
-            text=f"Movie: {moviename}",
-            bg="black",
-            fg="white",
-            font=("Helvetica", 12),
-            height=1,
-        ).place(x=0, y=85)
-        Label(
-            frame,
-            text=f"Movie: {moviename}",
-            bg="black",
-            fg="white",
-            font=("Helvetica", 12),
-            height=1,
-        ).place(x=0, y=85)
-        ho = Label(frame, image=test)
-        ho.place(x=245, y=35)
-        ho.image = test
-
-        hola = Label(frame, image=mi2)
-        hola.place(x=160, y=35)
-        hola.image = mi2
-
+        # display the total price for all tickets
         Label(
             frame1,
-            text="                                        ",
+            text=f"Total price: {price}",
             bg="white",
             width=46,
         ).pack(anchor="w")
+
+        booking = {
+            "seat": book1,
+            "movie": moviename,
+            "time": time1,
+            "price": price,
+        }
+        bookings.append(booking)
+    for booking in bookings:
+        print(
+            f"Seat: {booking['seat']} \nMovie: {booking['movie']} \nTime: {booking['time']} \nPrice: {booking['price']}")
+
+
+
 
     Button(
         frame1,
@@ -3909,6 +3910,8 @@ def ticketbill():
         width=36,
         command=lambda: transaction(),
     ).pack(anchor="w")
+
+    smsend(booking)
 
     def transaction():
         bill.destroy()

@@ -316,6 +316,8 @@ db_us = "root"
 db_pw = "332004"
 db_db = "movie_ticketbooking"
 
+
+
 # Create Entry widgets
 entry1 = Entry(ro, font=("Helvetica", 8), width=20)
 entry2 = Entry(ro, font=("Helvetica", 8), width=20, show="*")  # Masking the password
